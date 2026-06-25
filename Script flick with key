@@ -1,0 +1,253 @@
+-- ==========================================================
+--        ✨ REALDREAMS SCRIPTS INTERNATION v2.0 ✨
+-- ==========================================================
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game:GetService("CoreGui")
+ScreenGui.ResetOnSpawn = false
+
+-- ==========================================================
+-- 🛠️ DESIGN DA INTERFACE PRINCIPAL
+-- ==========================================================
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "RealDreamsMain"
+MainFrame.Size = UDim2.new(0, 420, 0, 360)
+MainFrame.Position = UDim2.new(0.35, 0, 0.25, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
+
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 12)
+MainCorner.Parent = MainFrame
+
+-- Título Neon
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 50)
+Title.Text = "🔮 REALDREAMS MULTI-HACK 🔮"
+Title.TextColor3 = Color3.fromRGB(180, 50, 255)
+Title.TextSize = 22
+Title.Font = Enum.Font.SourceSansBold
+Title.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+Title.Parent = MainFrame
+local TitleCorner = Instance.new("UICorner")
+TitleCorner.Parent = Title
+
+-- Estilização de botões (Função Auxiliar)
+local function CriarBotao(texto, posicaoY, corAtivo)
+    local Btn = Instance.new("TextButton")
+    Btn.Size = UDim2.new(0, 360, 0, 45)
+    Btn.Position = UDim2.new(0.07, 0, 0, posicaoY)
+    Btn.Text = texto .. ": DESATIVADO"
+    Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Btn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+    Btn.Font = Enum.Font.SourceSansBold
+    Btn.TextSize = 16
+    Btn.Parent = MainFrame
+    
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 8)
+    Corner.Parent = Btn
+    
+    return Btn
+end
+
+-- Criando os botões no painel
+local FarmBtn = CriarBotao("Auto Farm Seguro (No Céu)", 70)
+local KillBtn = CriarBotao("Kill Aura (Dano Remoto)", 130)
+local EspBtn  = CriarBotao("Wallhack / ESP (Ver Paredes)", 190)
+local AimBtn  = CriarBotao("Silent Aim (Travar Mira)", 250)
+local FlyBtn  = CriarBotao("Fly Anti-Cheat (Voo Liso)", 310)
+
+-- Variaveis de Controle
+local EstadoFarm, EstadoKill, EstadoEsp, EstadoAim, EstadoFly = false, false, false, false, false
+local Plrs = game:GetService("Players")
+local LP = Plrs.LocalPlayer
+local RunService = game:GetService("RunService")
+
+-- ==========================================================
+-- 1. AUTO FARM SEGURO NO CÉU (Sem Quedas)
+-- ==========================================================
+FarmBtn.MouseButton1Click:Connect(function()
+    EstadoFarm = not EstadoFarm
+    if EstadoFarm then
+        FarmBtn.Text = "Auto Farm Seguro: ATIVADO"
+        FarmBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 100)
+        task.spawn(function()
+            while EstadoFarm do
+                if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+                    LP.Character.HumanoidRootPart.CFrame = CFrame.new(0, 12000, 0)
+                    if not workspace:FindFirstChild("RDFarmPlat") then
+                        local plat = Instance.new("Part", workspace)
+                        plat.Name = "RDFarmPlat"
+                        plat.Size = Vector3.new(60, 1, 60)
+                        plat.Position = Vector3.new(0, 11995, 0)
+                        plat.Anchored = true
+                        plat.Transparency = 0.7
+                        plat.BrickColor = BrickColor.new("Plum")
+                    end
+                end
+                task.wait(1)
+            end
+        end)
+    else
+        FarmBtn.Text = "Auto Farm Seguro: DESATIVADO"
+        FarmBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+        if workspace:FindFirstChild("RDFarmPlat") then workspace.RDFarmPlat:Destroy() end
+    end
+end)
+
+-- ==========================================================
+-- 2. KILL AURA (Dano Avançado sem Teleportar)
+-- ==========================================================
+KillBtn.MouseButton1Click:Connect(function()
+    EstadoKill = not EstadoKill
+    if EstadoKill then
+        KillBtn.Text = "Kill Aura: ATIVADO"
+        KillBtn.BackgroundColor3 = Color3.fromRGB(220, 30, 30)
+        task.spawn(function()
+            while EstadoKill do
+                local tool = LP.Character and LP.Character:FindFirstChildOfClass("Tool")
+                for _, p in pairs(Plrs:GetPlayers()) do
+                    if p ~= LP and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                        local dist = (LP.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).Magnitude
+                        -- Só bate se o player estiver a menos de 100 studs (Evita flags do Anti-Cheat)
+                        if dist < 100 and p.Character:FindFirstChild("Humanoid") and p.Character.Humanoid.Health > 0 then
+                            if tool then
+                                tool:Activate()
+                                -- Dispara os Remotes mais comuns de jogos do Roblox
+                                local re = tool:FindFirstChildOfClass("RemoteEvent") or tool:FindFirstChildOfClass("RemoteFunction")
+                                if re then re:FireServer(p.Character.HumanoidRootPart) end
+                            end
+                        end
+                    end
+                end
+                task.wait(0.1)
+            end
+        end)
+    else
+        KillBtn.Text = "Kill Aura: DESATIVADO"
+        KillBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+    end
+end)
+
+-- ==========================================================
+-- 3. WALLHACK / ESP (Indetectável pelo Servidor)
+-- ==========================================================
+local function CriarESP(player)
+    if player == LP then return end
+    local Box = Instance.new("BoxHandleAdornment")
+    Box.Name = "RD_ESP"
+    Box.Size = Vector3.new(4, 6, 4)
+    Box.Color3 = Color3.fromRGB(180, 50, 255)
+    Box.AlwaysOnTop = true
+    Box.ZIndex = 5
+    Box.Transparency = 0.5
+    
+    player.CharacterAdded:Connect(function(char)
+        task.wait(0.5)
+        if EstadoEsp and char:FindFirstChild("HumanoidRootPart") then
+            Box.Adornee = char.HumanoidRootPart
+            Box.Parent = char.HumanoidRootPart
+        end
+    end)
+    
+    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") and EstadoEsp then
+        Box.Adornee = player.Character.HumanoidRootPart
+        Box.Parent = player.Character.HumanoidRootPart
+    end
+end
+
+EspBtn.MouseButton1Click:Connect(function()
+    EstadoEsp = not EstadoEsp
+    if EstadoEsp then
+        EspBtn.Text = "Wallhack / ESP: ATIVADO"
+        EspBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+        for _, p in pairs(Plrs:GetPlayers()) do CriarESP(p) end
+        Plrs.PlayerAdded:Connect(CriarESP)
+    else
+        EspBtn.Text = "Wallhack / ESP: DESATIVADO"
+        EspBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+        for _, p in pairs(Plrs:GetPlayers()) do
+            if p.Character and p.Character:FindFirstChild("HumanoidRootPart") and p.Character.HumanoidRootPart:FindFirstChild("RD_ESP") then
+                p.Character.HumanoidRootPart.RD_ESP:Destroy()
+            end
+        end
+    end
+end)
+
+-- ==========================================================
+-- 4. SILENT AIM (Mira Inteligente no Alvo Próximo)
+-- ==========================================================
+local function ObterInimigoProximo()
+    local menorDistancia = math.huge
+    local alvo = nil
+    for _, p in pairs(Plrs:GetPlayers()) do
+        if p ~= LP and p.Character and p.Character:FindFirstChild("HumanoidRootPart") and p.Character:FindFirstChild("Humanoid") and p.Character.Humanoid.Health > 0 then
+            local dist = (LP.Character.HumanoidRootPart.Position - p.Character.HumanoidRootPart.Position).Magnitude
+            if dist < menorDistancia then
+                menorDistancia = dist
+                alvo = p.Character.HumanoidRootPart
+            end
+        end
+    end
+    return alvo
+end
+
+AimBtn.MouseButton1Click:Connect(function()
+    EstadoAim = not EstadoAim
+    if EstadoAim then
+        AimBtn.Text = "Silent Aim: ATIVADO"
+        AimBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+        
+        _G.AimLoop = RunService.RenderStepped:Connect(function()
+            if EstadoAim and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+                local focado = ObterInimigoProximo()
+                if focado then
+                    -- Alinha sutilmente a câmera para frente do inimigo sem dar trancos bruscos
+                    workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, focado.Position)
+                end
+            end
+        end)
+    else
+        AimBtn.Text = "Silent Aim: DESATIVADO"
+        AimBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+        if _G.AimLoop then _G.AimLoop:Disconnect() end
+    end
+end)
+
+-- ==========================================================
+-- 5. FLY ANTI-CHEAT (Voo liso por velocidade vetorial)
+-- ==========================================================
+FlyBtn.MouseButton1Click:Connect(function()
+    EstadoFly = not EstadoFly
+    if EstadoFly then
+        FlyBtn.Text = "Fly Anti-Cheat: ATIVADO"
+        FlyBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 100)
+        
+        local Mouse = LP:GetMouse()
+        local Vel = Instance.new("BodyVelocity")
+        Vel.Name = "RDFlyVel"
+        Vel.maxForce = Vector3.new(1,1,1) * math.huge
+        Vel.velocity = Vector3.new(0,0,0)
+        Vel.Parent = LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
+        
+        task.spawn(function()
+            while EstadoFly and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") do
+                Vel.Parent = LP.Character.HumanoidRootPart
+                -- Voa baseando-se para onde a câmera do seu mouse está apontando
+                Vel.velocity = Mouse.Hit.LookVector * 80 -- Velocidade estável (80) para não dar kick
+                task.wait(0.05)
+            end
+            if Vel then Vel:Destroy() end
+        end)
+    else
+        FlyBtn.Text = "Fly Anti-Cheat: DESATIVADO"
+        FlyBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+        if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") and LP.Character.HumanoidRootPart:FindFirstChild("RDFlyVel") then
+            LP.Character.HumanoidRootPart.RDFlyVel:Destroy()
+        end
+    end
+end)
+
